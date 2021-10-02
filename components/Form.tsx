@@ -3,7 +3,7 @@ import { ReactChild } from "react";
 import style from "./Form.module.scss";
 
 interface Props {
-  children: ReactChild;
+  children?: ReactChild;
 }
 
 export default function Form(props: Props) {
