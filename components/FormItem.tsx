@@ -1,6 +1,33 @@
-import { Grid, Box, TextField, Button } from "@mui/material";
+import { Mode } from "@mui/icons-material";
+import { Grid, Box, TextField, Button, Typography, Link } from "@mui/material";
+import React, { useState, useRef } from "react";
 import style from "./Form.module.scss";
+
 export default function FormItem(): JSX.Element {
+  const [mode, setMode] = useState<Mode>("LOGIN");
+
+  const tabsEl = useRef<HTMLDivElement>(null);
+  const selectMode = (e: React.MouseEvent): void => {
+    const selectedEle = e.target as HTMLElement;
+    const eleCollection = tabsEl.current!.children;
+    const selectedVal = selectedEle.innerHTML.toUpperCase() as Mode;
+    for (let i = 0; i < eleCollection.length; i++) {
+      eleCollection[i].classList.remove(style.selected);
+    }
+    selectedEle.classList.add(style.selected);
+    setMode(selectedVal);
+  };
+
+  const onSignup = (e: React.MouseEvent) => {
+    const eleCollection = tabsEl.current!.children;
+    for (let i = 0; i < eleCollection.length; i++) {
+      eleCollection[i].classList.remove(style.selected);
+      if (eleCollection[i].innerHTML.toUpperCase() === "SIGNUP") {
+        eleCollection[i].classList.add(style.selected);
+      }
+    }
+    setMode("SIGNUP");
+  };
   return (
     <Grid
       style={{ height: "100%" }}
@@ -16,7 +43,7 @@ export default function FormItem(): JSX.Element {
         alignItems="center"
         justifyContent="center"
       >
-        <div className={style.tabs}>
+        <div className={style.tabs} ref={tabsEl} onClick={selectMode}>
           <span className={style.selected}>Login</span>
           <span>Signup</span>
         </div>
@@ -29,13 +56,25 @@ export default function FormItem(): JSX.Element {
         justifyContent="center"
         alignItems="center"
       >
-        <LoginForm />
+        <FormGroup mode={mode} onSignup={onSignup} />
       </Grid>
     </Grid>
   );
 }
+enum Action {
+  LOGIN = "LOGIN",
+  SIGNUP = "SIGNUP",
+}
 
-function LoginForm() {
+type Mode = keyof typeof Action;
+
+interface FormGroupProps {
+  mode: Mode;
+  onSignup: React.MouseEventHandler;
+}
+
+function FormGroup(props: FormGroupProps) {
+  const { mode, onSignup } = props;
   return (
     <Box
       style={{
@@ -55,8 +94,13 @@ function LoginForm() {
           m: "1rem auto",
           width: "100%",
           background: "linear-gradient(90deg, #b993d6, #8ca6db)",
-          "& .MuiButton-iconSizeLarge": {
-            height: 56,
+          height: "3.2rem",
+        },
+        "& .MuiTypography-root": {
+          m: ".5rem auto",
+          "& .MuiLink-root": {
+            color: "#8ca6db",
+            opacity: "0.8",
           },
         },
       }}
@@ -69,14 +113,24 @@ function LoginForm() {
         label="Password"
         type="password"
       />
-      <TextField
-        id="outlined-password-input"
-        label="Re-password"
-        type="password"
-      />
+      {mode === "SIGNUP" && (
+        <TextField
+          id="outlined-password-input"
+          label="Re-password"
+          type="password"
+        />
+      )}
       <Button variant="contained" size="large">
-        Contained
+        {mode}
       </Button>
+      {mode === "LOGIN" && (
+        <Typography>
+          Not a member?{" "}
+          <Link underline="hover" onClick={onSignup}>
+            Signup now
+          </Link>
+        </Typography>
+      )}
     </Box>
   );
 }
