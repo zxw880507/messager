@@ -3,7 +3,7 @@ import { Paper, Grid } from "@mui/material";
 import FormItem from "./FormItem";
 import style from "./Form.module.scss";
 
-export default function Form() {
+export default function Form(): JSX.Element {
   return (
     <Paper elevation={3} className={style.root}>
       <Grid
