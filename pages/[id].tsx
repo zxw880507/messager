@@ -29,8 +29,10 @@ const MyMessage = () => {
       }}
     >
       <button
-        style={{ position: "absolute", top: 0, left: 0 }}
-        onClick={() => setIsConversation((prev) => !prev)}
+        style={{ position: "absolute", top: 0, right: 0, zIndex: 9999 }}
+        onClick={() => {
+          setIsConversation((prev) => !prev);
+        }}
       >
         click me
       </button>
@@ -38,13 +40,14 @@ const MyMessage = () => {
         <div className="tabs">
           <Tabs />
         </div>
-
-        <div className="list">
-          <List isConversation={isConversation} matches={matches} />
-        </div>
+        {!(!matches && isConversation) && (
+          <div className="list">
+            <List isConversation={isConversation} matches={matches} />
+          </div>
+        )}
         {isConversation && (
           <div className="conversation">
-            <Chats />
+            <Chats matches={matches} setIsConversation={setIsConversation} />
           </div>
         )}
       </Box>
@@ -104,8 +107,10 @@ const sxNotMatches: SxProps = {
   },
   "& .list": {
     flex: 8,
+    overflow: "scroll",
   },
   "& .conversation": {
     flex: 8,
+    overflow: "scroll",
   },
 };
