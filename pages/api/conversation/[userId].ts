@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "../../../lib/prisma";
 
 type Data = {
-  conversation: any[];
+  conversation?: any[];
+  error?: string;
+  userId?: string;
 };
 
 export default async function handler(
@@ -12,6 +13,10 @@ export default async function handler(
 ) {
   const userId = req.query.userId as string;
 
-  const conversation = await prisma.conversation.findMany();
+  const conversation = await prisma.conversation.findMany({
+    where: {
+      OR: [{ creatorId: userId }, { participantId: userId }],
+    },
+  });
   res.status(200).json({ conversation });
 }
