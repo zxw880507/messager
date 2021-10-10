@@ -35,5 +35,6 @@ model Message {
   senderId String @db.ObjectId
   conversation Conversation @relation(fields: [conversationId], references: [id])
   conversationId String @db.ObjectId
-  createdBy DateTime
+  text String
+  createdBy DateTime @default(now())
 }
