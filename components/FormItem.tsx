@@ -3,9 +3,11 @@ import { Grid, Box, TextField, Button, Typography, Link } from "@mui/material";
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import style from "./Form.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { changeInput, resetInput } from "../store/features/inputsSlice";
 
 export default function FormItem(): JSX.Element {
   const [mode, setMode] = useState<Mode>("LOGIN");
+  const dispatch = useAppDispatch();
 
   const tabsEl = useRef<HTMLDivElement>(null);
   const selectMode = (e: React.MouseEvent): void => {
@@ -17,6 +19,7 @@ export default function FormItem(): JSX.Element {
     }
     selectedEle.classList.add(style.selected);
     setMode(selectedVal);
+    dispatch(resetInput(selectedVal));
   };
 
   const onSignup = (e: React.MouseEvent) => {
@@ -28,6 +31,7 @@ export default function FormItem(): JSX.Element {
       }
     }
     setMode("SIGNUP");
+    dispatch(resetInput("SIGNUP"));
   };
   return (
     <Grid
@@ -82,13 +86,12 @@ function FormGroup(props: FormGroupProps) {
   //     : { email: "", password: "", repassword: "" }
   // );
 
-  // const changeInput = (e: ChangeEvent, type: string) => {
-  //   setFormInputs((prev) => ({
-  //     ...prev,
-  //     [type]: e.target.value,
-  //   }));
-  //   console.log(formInputs);
-  // };
+  const onchange = (
+    e: ChangeEvent,
+    field: "email" | "password" | "repassword"
+  ) => {
+    dispatch(changeInput({ field, value: e.target.value }));
+  };
 
   // useEffect(() => {}, [mode]);
   const formInputs = useAppSelector((state) => state.formInputs);
@@ -131,7 +134,7 @@ function FormGroup(props: FormGroupProps) {
         type="text"
         autoComplete="off"
         value={formInputs.email}
-        onChange={(e) => changeInput(e, "email")}
+        onChange={(e) => onchange(e, "email")}
       />
       <TextField
         id="outlined-password-input"
@@ -139,7 +142,7 @@ function FormGroup(props: FormGroupProps) {
         type="password"
         autoComplete="off"
         value={formInputs.password}
-        onChange={(e) => changeInput(e, "password")}
+        onChange={(e) => onchange(e, "password")}
       />
       {mode === "SIGNUP" && (
         <TextField
@@ -148,7 +151,7 @@ function FormGroup(props: FormGroupProps) {
           type="password"
           autoComplete="off"
           value={formInputs.repassword}
-          onChange={(e) => changeInput(e, "repassword")}
+          onChange={(e) => onchange(e, "repassword")}
         />
       )}
       <Button variant="contained" size="large">
