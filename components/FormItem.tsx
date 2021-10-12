@@ -1,7 +1,8 @@
 import { Mode } from "@mui/icons-material";
 import { Grid, Box, TextField, Button, Typography, Link } from "@mui/material";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import style from "./Form.module.scss";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
 
 export default function FormItem(): JSX.Element {
   const [mode, setMode] = useState<Mode>("LOGIN");
@@ -75,6 +76,23 @@ interface FormGroupProps {
 
 function FormGroup(props: FormGroupProps) {
   const { mode, onSignup } = props;
+  // const [formInputs, setFormInputs] = useState<Inputs<string>>(
+  //   mode === "LOGIN"
+  //     ? { email: "", password: "" }
+  //     : { email: "", password: "", repassword: "" }
+  // );
+
+  // const changeInput = (e: ChangeEvent, type: string) => {
+  //   setFormInputs((prev) => ({
+  //     ...prev,
+  //     [type]: e.target.value,
+  //   }));
+  //   console.log(formInputs);
+  // };
+
+  // useEffect(() => {}, [mode]);
+  const formInputs = useAppSelector((state) => state.formInputs);
+  const dispatch = useAppDispatch();
   return (
     <Box
       style={{
@@ -112,12 +130,16 @@ function FormGroup(props: FormGroupProps) {
         label="Email"
         type="text"
         autoComplete="off"
+        value={formInputs.email}
+        onChange={(e) => changeInput(e, "email")}
       />
       <TextField
         id="outlined-password-input"
         label="Password"
         type="password"
         autoComplete="off"
+        value={formInputs.password}
+        onChange={(e) => changeInput(e, "password")}
       />
       {mode === "SIGNUP" && (
         <TextField
@@ -125,6 +147,8 @@ function FormGroup(props: FormGroupProps) {
           label="Re-password"
           type="password"
           autoComplete="off"
+          value={formInputs.repassword}
+          onChange={(e) => changeInput(e, "repassword")}
         />
       )}
       <Button variant="contained" size="large">
