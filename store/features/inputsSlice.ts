@@ -1,15 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface InputsState<T> {
-  email: T;
-  password: T;
-  repassword?: T;
+  [key: string]: string | undefined;
 }
 
 type Payload<T> = {
   field: keyof T;
   value: T[keyof T];
 };
+
+enum Action {
+  LOGIN = "LOGIN",
+  SIGNUP = "SIGNUP",
+}
+
+type Mode = keyof typeof Action;
+
 const initialState: InputsState<string> = {
   email: "",
   password: "",
@@ -23,9 +29,13 @@ const inputsSlice = createSlice({
     changeInput(state, action: PayloadAction<Payload<InputsState<string>>>) {
       state[action.payload.field] = action.payload.value!;
     },
-    resetInput(state, actions: PayloadAction<>);,
+    resetInput(state) {
+      Object.keys(state).forEach((key) => {
+        state[key] = "";
+      });
+    },
   },
 });
 
-export const { changeInput } = inputsSlice.actions;
+export const { changeInput, resetInput } = inputsSlice.actions;
 export default inputsSlice.reducer;
