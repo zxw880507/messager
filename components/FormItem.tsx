@@ -1,9 +1,20 @@
 import { Mode } from "@mui/icons-material";
 import { Grid, Box, TextField, Button, Typography, Link } from "@mui/material";
-import React, { useState, useRef, ChangeEvent, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  ChangeEvent,
+  useEffect,
+  FormEvent,
+} from "react";
 import style from "./Form.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { changeInput, resetInput } from "../store/features/inputsSlice";
+import {
+  changeInput,
+  resetInput,
+  setInputByMode,
+} from "../store/features/inputsSlice";
+import { setLogin, authenState } from "../store/features/auth/authSlice";
 
 export default function FormItem(): JSX.Element {
   const [mode, setMode] = useState<Mode>("LOGIN");
@@ -19,7 +30,7 @@ export default function FormItem(): JSX.Element {
     }
     selectedEle.classList.add(style.selected);
     setMode(selectedVal);
-    dispatch(resetInput(selectedVal));
+    dispatch(setInputByMode(selectedVal));
   };
 
   const onSignup = (e: React.MouseEvent) => {
@@ -31,7 +42,7 @@ export default function FormItem(): JSX.Element {
       }
     }
     setMode("SIGNUP");
-    dispatch(resetInput("SIGNUP"));
+    dispatch(setInputByMode("SIGNUP"));
   };
   return (
     <Grid
@@ -80,11 +91,6 @@ interface FormGroupProps {
 
 function FormGroup(props: FormGroupProps) {
   const { mode, onSignup } = props;
-  // const [formInputs, setFormInputs] = useState<Inputs<string>>(
-  //   mode === "LOGIN"
-  //     ? { email: "", password: "" }
-  //     : { email: "", password: "", repassword: "" }
-  // );
 
   const onchange = (
     e: ChangeEvent,
@@ -93,8 +99,14 @@ function FormGroup(props: FormGroupProps) {
     dispatch(changeInput({ field, value: e.target.value }));
   };
 
-  // useEffect(() => {}, [mode]);
+  const onsubmit = (e: FormEvent) => {
+    e.preventDefault();
+    dispatch(setLogin());
+  };
+
   const formInputs = useAppSelector((state) => state.formInputs);
+  const auth = useAppSelector(authenState);
+
   const dispatch = useAppDispatch();
   return (
     <Box
@@ -154,9 +166,10 @@ function FormGroup(props: FormGroupProps) {
           onChange={(e) => onchange(e, "repassword")}
         />
       )}
-      <Button variant="contained" size="large">
+      <Button variant="contained" size="large" onClick={onsubmit}>
         {mode}
       </Button>
+      <p>{auth && auth.user}</p>
       {mode === "LOGIN" && (
         <Typography>
           Not a member?{" "}
