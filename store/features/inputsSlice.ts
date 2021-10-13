@@ -4,22 +4,14 @@ interface InputsState<T> {
   [key: string]: string | undefined;
 }
 
-type Payload<T> = {
-  field: keyof T;
-  value: T[keyof T];
+type Payload<T, K extends keyof T = keyof T> = {
+  field: K;
+  value: T[K];
 };
-
-enum Action {
-  LOGIN = "LOGIN",
-  SIGNUP = "SIGNUP",
-}
-
-type Mode = keyof typeof Action;
 
 const initialState: InputsState<string> = {
   email: "",
   password: "",
-  repassword: "",
 };
 
 const inputsSlice = createSlice({
@@ -27,15 +19,27 @@ const inputsSlice = createSlice({
   initialState,
   reducers: {
     changeInput(state, action: PayloadAction<Payload<InputsState<string>>>) {
-      state[action.payload.field] = action.payload.value!;
+      state[action.payload.field] = action.payload.value;
     },
     resetInput(state) {
       Object.keys(state).forEach((key) => {
         state[key] = "";
       });
     },
+    setInputByMode(state, action: PayloadAction<string>) {
+      switch (action.payload) {
+        case "LOGIN":
+          state = { email: "", password: "" };
+          return state;
+        case "SIGNUP":
+          state = { email: "", password: "", repassword: "" };
+          return state;
+        default:
+          break;
+      }
+    },
   },
 });
 
-export const { changeInput, resetInput } = inputsSlice.actions;
+export const { changeInput, resetInput, setInputByMode } = inputsSlice.actions;
 export default inputsSlice.reducer;
