@@ -1,12 +1,7 @@
 import { Mode } from "@mui/icons-material";
 import { Grid, Box, TextField, Button, Typography, Link } from "@mui/material";
-import React, {
-  useState,
-  useRef,
-  ChangeEvent,
-  FormEvent,
-  MouseEventHandler,
-} from "react";
+import React, { useState, useRef, ChangeEvent, FormEvent } from "react";
+import TransitionAlerts from "./TransitionAlerts";
 import style from "./Form.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { changeInput, setInputByMode } from "../store/features/inputsSlice";
@@ -166,6 +161,7 @@ function FormGroup(props: FormGroupProps) {
           onChange={(e) => onchange(e, "repassword")}
         />
       )}
+      <TransitionAlerts />
       <Button
         variant="contained"
         size="large"
