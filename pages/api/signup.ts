@@ -1,19 +1,28 @@
 import withSession from "../../lib/session";
 import { prisma } from "../../lib/prisma";
 
-export default withSession((req, res) => {
+export default withSession(async (req, res) => {
   const { email, password, repassword } = req.body;
   if (password !== repassword) {
-    res.status(404).send({ error: "password did not match" });
+    res.status(500).send({ errorMessage: "Password did not match" });
     return;
   }
-  prisma.user
-    .create({
-      data: {
-        email,
-        password,
-      },
-    })
-    .then((user) => res.status(200).json(user))
-    .catch((err) => console.log("this is err"));
+
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    res
+      .status(500)
+      .send({ errorMessage: "This email has already registered!" });
+    return;
+  }
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password,
+    },
+  });
+  req.session.set("user", user);
+  await req.session.save();
+  res.status(200).json(user);
 });
