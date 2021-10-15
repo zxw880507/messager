@@ -17,8 +17,8 @@ export default withSession(async (req, res) => {
       res.status(200).json(user);
       return;
     }
-    res.status(400).send({ error: "password is incorrect!" });
+    res.status(500).send({ errorMessage: "Password is incorrect!" });
   } else {
-    res.status(400).send({ error: "user not found!" });
+    res.status(500).send({ errorMessage: "User is not found!" });
   }
 });
