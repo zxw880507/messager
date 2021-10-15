@@ -1,58 +1,88 @@
+import type { SxProps } from "@mui/system";
 import { useRouter } from "next/router";
 import { Container, Box, useMediaQuery } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Tabs from "../components/Tabs";
 import List from "../components/List";
 import Chats from "../components/Chats";
-import type { SxProps } from "@mui/system";
+import NoMatch from "../components/NoMatch";
+import { authenState, setLogout } from "../store/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import useAuth from "../lib/useAuth";
 
 const MyMessage = () => {
   const matches = useMediaQuery("(min-width:600px)");
   const router = useRouter();
   const [isConversation, setIsConversation] = useState<boolean>(false);
-  const { id } = router.query;
+  const id = router.query.id as string | undefined;
+  const dispatch = useAppDispatch();
+  const { auth, status } = useAuth();
+  useEffect(() => {
+    if (status === "failed") {
+      router.push("/");
+    }
+  }, [status, router]);
 
-  return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        minWidth: 320,
-        width: "100vw",
-        height: "100vh",
-        padding: 0,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: matches
-          ? "linear-gradient(#b993d6, #8ca6db)"
-          : "linear-gradient(#ece9e6, #ffffff)",
-      }}
-    >
-      <button
-        style={{ position: "absolute", top: 0, right: 0, zIndex: 9999 }}
-        onClick={() => {
-          setIsConversation((prev) => !prev);
+  if (status === "succeeded") {
+    return (
+      <Container
+        maxWidth="lg"
+        sx={{
+          minWidth: 320,
+          width: "100vw",
+          height: "100vh",
+          padding: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: matches
+            ? "linear-gradient(#b993d6, #8ca6db)"
+            : "linear-gradient(#ece9e6, #ffffff)",
         }}
       >
-        click me
-      </button>
-      <Box sx={matches ? sxMatches : sxNotMatches}>
-        <div className="tabs">
-          <Tabs />
-        </div>
-        {!(!matches && isConversation) && (
-          <div className="list">
-            <List isConversation={isConversation} matches={matches} />
-          </div>
+        {auth && auth.id === id ? (
+          <>
+            <button
+              style={{ position: "absolute", top: 0, left: 0, zIndex: 9999 }}
+              onClick={() => {
+                dispatch(setLogout()).then(() => router.push("/"));
+              }}
+            >
+              LOGOUT
+            </button>
+            <button
+              style={{ position: "absolute", top: 0, right: 0, zIndex: 9999 }}
+              onClick={() => {
+                setIsConversation((prev) => !prev);
+              }}
+            >
+              click me
+            </button>
+            <Box sx={matches ? sxMatches : sxNotMatches}>
+              <div className="tabs">
+                <Tabs />
+              </div>
+              {!(!matches && isConversation) && (
+                <div className="list">
+                  <List isConversation={isConversation} matches={matches} />
+                </div>
+              )}
+              {isConversation && (
+                <div className="conversation">
+                  <Chats
+                    matches={matches}
+                    setIsConversation={setIsConversation}
+                  />
+                </div>
+              )}
+            </Box>
+          </>
+        ) : (
+          <NoMatch path={router.asPath} />
         )}
-        {isConversation && (
-          <div className="conversation">
-            <Chats matches={matches} setIsConversation={setIsConversation} />
-          </div>
-        )}
-      </Box>
-    </Container>
-  );
+      </Container>
+    );
+  } else return null;
 };
 
 export default MyMessage;
