@@ -4,15 +4,14 @@ import Form from "../components/Form";
 import styles from "../styles/Home.module.css";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-// import { useAppSelector, useAppDispatch } from "../store/hooks";
-// import { authenState, getUser } from "../store/features/auth/authSlice";
 import useAuth from "../lib/useAuth";
 
 const Home: NextPage = () => {
   const authen = useAuth();
   const router = useRouter();
   useEffect(() => {
-    const { auth, status, error } = authen;
+    const { auth, status } = authen;
+
     if (status === "succeeded") {
       router.push(`${auth!.id}`);
     }
