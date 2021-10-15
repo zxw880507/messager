@@ -4,17 +4,13 @@ import React, {
   useState,
   useRef,
   ChangeEvent,
-  useEffect,
   FormEvent,
+  MouseEventHandler,
 } from "react";
 import style from "./Form.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import {
-  changeInput,
-  resetInput,
-  setInputByMode,
-} from "../store/features/inputsSlice";
-import { setLogin, authenState } from "../store/features/auth/authSlice";
+import { changeInput, setInputByMode } from "../store/features/inputsSlice";
+import { setLogin, setSignup } from "../store/features/auth/authSlice";
 
 export default function FormItem(): JSX.Element {
   const [mode, setMode] = useState<Mode>("LOGIN");
@@ -92,6 +88,9 @@ interface FormGroupProps {
 function FormGroup(props: FormGroupProps) {
   const { mode, onSignup } = props;
 
+  const dispatch = useAppDispatch();
+  const formInputs = useAppSelector((state) => state.formInputs);
+
   const onchange = (
     e: ChangeEvent,
     field: "email" | "password" | "repassword"
@@ -99,15 +98,16 @@ function FormGroup(props: FormGroupProps) {
     dispatch(changeInput({ field, value: e.target.value }));
   };
 
-  const onsubmit = (e: FormEvent) => {
+  const onsubmit = (e: FormEvent, mode: Mode) => {
     e.preventDefault();
-    dispatch(setLogin());
+    if (mode === "LOGIN") {
+      dispatch(setLogin());
+    }
+    if (mode === "SIGNUP") {
+      dispatch(setSignup());
+    }
   };
 
-  const formInputs = useAppSelector((state) => state.formInputs);
-  const auth = useAppSelector(authenState);
-
-  const dispatch = useAppDispatch();
   return (
     <Box
       style={{
@@ -166,10 +166,13 @@ function FormGroup(props: FormGroupProps) {
           onChange={(e) => onchange(e, "repassword")}
         />
       )}
-      <Button variant="contained" size="large" onClick={onsubmit}>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={(e) => onsubmit(e, mode)}
+      >
         {mode}
       </Button>
-      <p>{auth && auth.user}</p>
       {mode === "LOGIN" && (
         <Typography>
           Not a member?{" "}
