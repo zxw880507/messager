@@ -13,9 +13,9 @@ export default withSession(async (req, res) => {
     if (verified) {
       res.status(200).json(verified);
     } else {
-      res.status(404).json({ error: "User does not exist!" });
+      res.status(500).send({ errorMessage: null });
     }
   } else {
-    res.status(404).send(null);
+    res.status(500).send({ errorMessage: null });
   }
 });
