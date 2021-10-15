@@ -1,24 +1,24 @@
-import { withIronSession, Session } from "next-iron-session";
-import { NextApiRequest, NextApiResponse } from "next";
+import withSession from "../../lib/session";
+import { prisma } from "../../lib/prisma";
 
-type NextIronRequest = NextApiRequest & { session: Session };
+export default withSession(async (req, res) => {
+  const { email, password } = req.body;
 
-async function handler(
-  req: NextIronRequest,
-  res: NextApiResponse
-): Promise<void> {
-  req.session.set("user", {});
-  await req.session.save();
-  res.redirect("/");
-}
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
 
-export default withIronSession(handler, {
-  password: "complex_password_at_least_32_characters_long",
-  cookieName: "msg_user",
-  cookieOptions: {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24,
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-  },
+  if (user) {
+    if (user.password === password) {
+      req.session.set("user", user);
+      await req.session.save();
+      res.status(200).json(user);
+      return;
+    }
+    res.status(400).send({ error: "password is incorrect!" });
+  } else {
+    res.status(400).send({ error: "user not found!" });
+  }
 });
