@@ -7,8 +7,10 @@ export default function useAuth() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getUser());
-  }, [dispatch]);
+    if (authen.status === "idle") {
+      dispatch(getUser());
+    }
+  }, [dispatch, authen]);
 
   return authen;
 }
