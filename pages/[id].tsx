@@ -6,8 +6,8 @@ import Tabs from "../components/Tabs";
 import List from "../components/List";
 import Chats from "../components/Chats";
 import NoMatch from "../components/NoMatch";
-import { authenState, setLogout } from "../store/features/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setLogout } from "../store/features/auth/authSlice";
+import { useAppDispatch } from "../store/hooks";
 import useAuth from "../lib/useAuth";
 
 const MyMessage = () => {
@@ -17,6 +17,7 @@ const MyMessage = () => {
   const id = router.query.id as string | undefined;
   const dispatch = useAppDispatch();
   const { auth, status } = useAuth();
+
   useEffect(() => {
     if (status === "failed") {
       router.push("/");
