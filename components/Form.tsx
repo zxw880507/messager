@@ -1,5 +1,4 @@
 import { Paper, Grid } from "@mui/material";
-// import { ReactChild } from "react";
 import FormItem from "./FormItem";
 import style from "./Form.module.scss";
 
