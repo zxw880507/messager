@@ -1,13 +1,15 @@
 import styles from "./List.module.scss";
 import classNames from "classnames";
+import { useEffect } from "react";
 import { Avatar, Typography } from "@mui/material";
 
 interface Props<T> {
   isConversation: T;
   matches: T;
+  id: T;
 }
 export default function List(props: Props<boolean>) {
-  const { isConversation, matches } = props;
+  const { isConversation, matches, id } = props;
 
   const liClass = classNames(styles.listItem, {
     [styles.dense]: isConversation && matches,
