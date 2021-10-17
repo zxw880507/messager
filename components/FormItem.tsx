@@ -5,7 +5,11 @@ import TransitionAlerts from "./TransitionAlerts";
 import style from "./Form.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { changeInput, setInputByMode } from "../store/features/inputsSlice";
-import { setLogin, setSignup } from "../store/features/auth/authSlice";
+import {
+  setLogin,
+  setSignup,
+  resetError,
+} from "../store/features/auth/authSlice";
 
 export default function FormItem(): JSX.Element {
   const [mode, setMode] = useState<Mode>("LOGIN");
@@ -22,6 +26,7 @@ export default function FormItem(): JSX.Element {
     selectedEle.classList.add(style.selected);
     setMode(selectedVal);
     dispatch(setInputByMode(selectedVal));
+    dispatch(resetError());
   };
 
   const onSignup = (e: React.MouseEvent) => {
@@ -34,6 +39,7 @@ export default function FormItem(): JSX.Element {
     }
     setMode("SIGNUP");
     dispatch(setInputByMode("SIGNUP"));
+    dispatch(resetError());
   };
   return (
     <Grid
