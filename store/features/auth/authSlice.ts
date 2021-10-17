@@ -148,7 +148,7 @@ const authSlice = createSlice({
         state.status = "pending";
       })
       .addCase(setLogout.fulfilled, (state, action: AnyAction) => {
-        state.status = "idle";
+        state.status = "failed";
         state.auth = action.payload;
       });
   },
