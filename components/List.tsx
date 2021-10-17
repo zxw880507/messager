@@ -6,7 +6,7 @@ import { Avatar, Typography } from "@mui/material";
 interface Props<T> {
   isConversation: T;
   matches: T;
-  id: T;
+  id: string;
 }
 export default function List(props: Props<boolean>) {
   const { isConversation, matches, id } = props;
