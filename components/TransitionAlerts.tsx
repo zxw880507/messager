@@ -25,6 +25,7 @@ export default function TransitionAlerts() {
     >
       <Collapse in={Boolean(error)}>
         <Alert
+          variant="outlined"
           severity="error"
           action={
             <IconButton
