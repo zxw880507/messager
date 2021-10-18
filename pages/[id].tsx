@@ -7,15 +7,16 @@ import List from "../components/List";
 import Chats from "../components/Chats";
 import NoMatch from "../components/NoMatch";
 import { setLogout } from "../store/features/auth/authSlice";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import useAuth from "../lib/useAuth";
+import { chatState, onChat, cancelChat } from "../store/features/chatSlice";
 
 const MyMessage = () => {
   const matches = useMediaQuery("(min-width:600px)");
   const router = useRouter();
-  const [isConversation, setIsConversation] = useState<boolean>(false);
   const id = router.query.id as string;
   const dispatch = useAppDispatch();
+  const { isConversation, conversationId } = useAppSelector(chatState);
   const { auth, status } = useAuth();
 
   useEffect(() => {
@@ -52,9 +53,13 @@ const MyMessage = () => {
           </button>
           <button
             style={{ position: "absolute", top: 0, right: 0, zIndex: 9999 }}
-            onClick={() => {
-              setIsConversation((prev) => !prev);
-            }}
+            // onClick={() => {
+            //   if (isConversation) {
+            //     dispatch(cancelChat());
+            //   } else {
+            //     dispatch(onChat());
+            //   }
+            // }}
           >
             click me
           </button>
@@ -64,19 +69,12 @@ const MyMessage = () => {
             </div>
             {!(!matches && isConversation) && (
               <div className="list">
-                <List
-                  isConversation={isConversation}
-                  matches={matches}
-                  id={id}
-                />
+                <List matches={matches} id={id} />
               </div>
             )}
             {isConversation && (
               <div className="conversation">
-                <Chats
-                  matches={matches}
-                  setIsConversation={setIsConversation}
-                />
+                <Chats matches={matches} />
               </div>
             )}
           </Box>
