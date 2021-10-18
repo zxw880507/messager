@@ -2,29 +2,34 @@ import styles from "./Chats.module.scss";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import { IconButton, Avatar } from "@mui/material";
 import classNames from "classnames";
-import { Dispatch, SetStateAction } from "react";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { cancelChat, chatState } from "../store/features/chatSlice";
 
 interface Props<T> {
   matches: T;
-  setIsConversation: Dispatch<SetStateAction<T>>;
 }
 export default function Chats(props: Props<boolean>) {
-  const { matches, setIsConversation } = props;
+  const { matches } = props;
+  const { conversationId } = useAppSelector(chatState);
+  const dispatch = useAppDispatch();
   const titleClass = classNames(styles.chatTitle, {
     [styles.mobile]: !matches,
   });
   const textFieldClass = classNames(styles.textField, {
     [styles.mobile]: !matches,
   });
+  const backToList = () => {
+    dispatch(cancelChat());
+  };
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.backButton}>
-          <IconButton onClick={() => setIsConversation(false)}>
+          <IconButton onClick={() => backToList()}>
             <ArrowBackIosNewRoundedIcon />
           </IconButton>
         </div>
-        <span className={titleClass}>ice eater</span>
+        <span className={titleClass}>{conversationId}</span>
       </div>
       <div className={styles.main}>
         <ul>
