@@ -23,7 +23,7 @@ const initialState: conversationState = {
 
 export const getConversation = createAsyncThunk(
   "/getConversation",
-  async (id) => {
+  async (id?: string) => {
     const res = await axios.get(`/api/conversation/${id}`);
     return res.data;
   }
@@ -43,6 +43,7 @@ const conversationSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(getConversation.fulfilled, (state, action: AnyAction) => {
+        state.status = "succeeded";
         state.conversation = action.payload;
       });
   },
