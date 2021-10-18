@@ -2,24 +2,41 @@ import styles from "./List.module.scss";
 import classNames from "classnames";
 import { useEffect } from "react";
 import { Avatar, Typography } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  conversationState,
+  getConversation,
+} from "../store/features/conversationSlice";
+import { chatState, onChat } from "../store/features/chatSlice";
 
 interface Props<T> {
-  isConversation: T;
   matches: T;
   id: string;
 }
 export default function List(props: Props<boolean>) {
-  const { isConversation, matches, id } = props;
-
+  const { matches, id } = props;
+  const { isConversation, conversationId } = useAppSelector(chatState);
   const liClass = classNames(styles.listItem, {
     [styles.dense]: isConversation && matches,
   });
 
+  const { conversation, status, error } = useAppSelector(conversationState);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getConversation(id));
+  }, [dispatch, id]);
+
+  const startChatById = (conversationId: string) => {
+    dispatch(onChat(conversationId));
+  };
   return (
     <ul className={styles.list}>
-      {/* template datalist */}
-      {[...new Array(10)].map((el, index) => (
-        <li key={index} className={liClass}>
+      {conversation.map((el, index) => (
+        <li
+          key={index}
+          className={liClass}
+          onClick={() => startChatById(el.id)}
+        >
           <div>
             <Avatar
               variant="square"
@@ -28,7 +45,7 @@ export default function List(props: Props<boolean>) {
             />
           </div>
           <div className={styles.listText}>
-            <span>ice eater</span>
+            <span>{el.user.email}</span>
           </div>
         </li>
       ))}
