@@ -74,7 +74,7 @@ const MyMessage = () => {
             )}
             {isConversation && (
               <div className="conversation">
-                <Chats matches={matches} />
+                <Chats matches={matches} id={id} />
               </div>
             )}
           </Box>
