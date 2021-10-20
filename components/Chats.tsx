@@ -1,11 +1,16 @@
 import styles from "./Chats.module.scss";
 import { ChangeEvent, useEffect } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import KeyboardReturnSharpIcon from "@mui/icons-material/KeyboardReturnSharp";
 import { IconButton, Avatar } from "@mui/material";
 import classNames from "classnames";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { cancelChat, chatState } from "../store/features/chatSlice";
-import { getMessages, messagesState } from "../store/features/messagesSlice";
+import {
+  getMessages,
+  sendMessage,
+  messagesState,
+} from "../store/features/messagesSlice";
 import { textOnChange, text } from "../store/features/textSlice";
 
 interface Props<T> {
@@ -79,6 +84,9 @@ export default function Chats(props: Props<boolean>) {
           onChange={onchange}
           value={textValue}
         />
+        <IconButton onClick={() => dispatch(sendMessage())}>
+          <KeyboardReturnSharpIcon />
+        </IconButton>
       </div>
     </div>
   );
