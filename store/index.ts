@@ -4,15 +4,19 @@ import inputsReducer from "./features/inputsSlice";
 import authReducer from "./features/auth/authSlice";
 import conversationReducer from "./features/conversationSlice";
 import chatReducer from "./features/chatSlice";
+import messagesReducer from "./features/messagesSlice";
+import textReducer from "./features/textSlice";
 
 declare const reducer: Reducer<{}>;
 
 const store = configureStore({
   reducer: {
     formInputs: inputsReducer,
-    auth: authReducer,
-    conversation: conversationReducer,
+    authState: authReducer,
+    conversationState: conversationReducer,
     chat: chatReducer,
+    messagesState: messagesReducer,
+    text: textReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   devTools: process.env.NODE_ENV !== "production",
