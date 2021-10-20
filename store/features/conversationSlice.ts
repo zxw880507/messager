@@ -50,4 +50,4 @@ const conversationSlice = createSlice({
 });
 
 export default conversationSlice.reducer;
-export const conversationState = (state: RootState) => state.conversation;
+export const conversationState = (state: RootState) => state.conversationState;
