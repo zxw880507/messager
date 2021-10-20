@@ -14,27 +14,58 @@ export type Messages = Array<MessagesElement<string>>;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Messages>
+  res: NextApiResponse<Messages | MessagesElement<string>>
 ) {
   const conversationId = req.query.conversationId as string;
-  const messages = await prisma.message.findMany({
-    where: {
-      conversationId,
-    },
-    orderBy: {
-      createdBy: "asc",
-    },
-    select: {
-      id: true,
-      sender: {
+
+  switch (req.method) {
+    case "GET": {
+      const messages = await prisma.message.findMany({
+        where: {
+          conversationId,
+        },
+        orderBy: {
+          createdBy: "asc",
+        },
         select: {
           id: true,
-          email: true,
+          sender: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+          text: true,
         },
-      },
-      text: true,
-    },
-  });
+      });
 
-  return res.status(200).json(messages);
+      return res.status(200).json(messages);
+    }
+
+    case "POST": {
+      const { text, senderId } = req.body;
+      const message = await prisma.message.create({
+        data: {
+          senderId,
+          conversationId,
+          text,
+        },
+        select: {
+          id: true,
+          sender: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+          text: true,
+        },
+      });
+
+      return res.status(200).json(message);
+    }
+
+    default:
+      return;
+  }
 }
