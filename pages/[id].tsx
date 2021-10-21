@@ -9,14 +9,14 @@ import NoMatch from "../components/NoMatch";
 import { setLogout } from "../store/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import useAuth from "../lib/useAuth";
-import { chatState, onChat, cancelChat } from "../store/features/chatSlice";
+import { chatState } from "../store/features/chatSlice";
 
 const MyMessage = () => {
   const matches = useMediaQuery("(min-width:600px)");
   const router = useRouter();
   const id = router.query.id as string;
   const dispatch = useAppDispatch();
-  const { isConversation, conversationId } = useAppSelector(chatState);
+  const { isConversation } = useAppSelector(chatState);
   const { auth, status } = useAuth();
 
   useEffect(() => {
@@ -53,13 +53,6 @@ const MyMessage = () => {
           </button>
           <button
             style={{ position: "absolute", top: 0, right: 0, zIndex: 9999 }}
-            // onClick={() => {
-            //   if (isConversation) {
-            //     dispatch(cancelChat());
-            //   } else {
-            //     dispatch(onChat());
-            //   }
-            // }}
           >
             click me
           </button>
