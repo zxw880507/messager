@@ -1,4 +1,9 @@
-import { AnyAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  AnyAction,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "..";
 import type { Messages } from "../../pages/api/message/[conversationId]";
@@ -33,11 +38,12 @@ export const getMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   "/sendMessage",
-  async (_, { getState, dispatch }) => {
+  async (socketId: string | null, { getState, dispatch }) => {
     const { chat, text, authState } = getState() as RootState;
     const res = await axios.post(`/api/message/${chat.conversationId}`, {
       text,
       senderId: authState.auth!.id,
+      socket_id: socketId,
     });
     return res.data;
   }
@@ -46,7 +52,11 @@ export const sendMessage = createAsyncThunk(
 const messagesSlice = createSlice({
   name: "messages",
   initialState,
-  reducers: {},
+  reducers: {
+    receiveMessage(state, action: PayloadAction<any>) {
+      state.messages = [...state.messages, action.payload];
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getMessages.pending, (state) => {
@@ -76,3 +86,4 @@ const messagesSlice = createSlice({
 
 export default messagesSlice.reducer;
 export const messagesState = (state: RootState) => state.messagesState;
+export const { receiveMessage } = messagesSlice.actions;
