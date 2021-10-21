@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
+import pusher from "../../../lib/pusher";
 
 type MessagesElement<T> = {
   id: T;
@@ -43,7 +44,7 @@ export default async function handler(
     }
 
     case "POST": {
-      const { text, senderId } = req.body;
+      const { text, senderId, socket_id } = req.body;
       const message = await prisma.message.create({
         data: {
           senderId,
@@ -61,7 +62,16 @@ export default async function handler(
           text: true,
         },
       });
-
+      pusher.trigger(
+        "msg_channel",
+        conversationId,
+        {
+          message,
+        },
+        {
+          socket_id,
+        }
+      );
       return res.status(200).json(message);
     }
 
