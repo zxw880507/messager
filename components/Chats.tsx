@@ -1,5 +1,5 @@
 import styles from "./Chats.module.scss";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState, useRef } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import KeyboardReturnSharpIcon from "@mui/icons-material/KeyboardReturnSharp";
 import { IconButton, Avatar } from "@mui/material";
@@ -9,9 +9,11 @@ import { cancelChat, chatState } from "../store/features/chatSlice";
 import {
   getMessages,
   sendMessage,
+  receiveMessage,
   messagesState,
 } from "../store/features/messagesSlice";
 import { textOnChange, text } from "../store/features/textSlice";
+import Pusher from "pusher-js";
 
 interface Props<T> {
   matches: T;
@@ -19,6 +21,7 @@ interface Props<T> {
 }
 export default function Chats(props: Props<boolean>) {
   const { matches, id } = props;
+  const [socketId, setSocketId] = useState<string | null>(null);
   const { conversationId } = useAppSelector(chatState);
   const { messages } = useAppSelector(messagesState);
   const textValue = useAppSelector(text);
@@ -37,7 +40,33 @@ export default function Chats(props: Props<boolean>) {
   };
   useEffect(() => {
     dispatch(getMessages());
+    Pusher.logToConsole = true;
+    const pusher = new Pusher("7edcd9552c5cad7513f9", {
+      cluster: "us3",
+    });
+    pusher.connection.bind("connected", () => {
+      setSocketId(pusher.connection.socket_id);
+    });
+    const channel = pusher.subscribe("msg_channel");
+    if (conversationId) {
+      channel.bind(conversationId, function (data: any) {
+        dispatch(receiveMessage(data.message));
+      });
+    }
+    return () => {
+      pusher.disconnect();
+    };
   }, [dispatch, conversationId]);
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    const el = ref.current as HTMLElement;
+    const scrollHeight = el.scrollHeight;
+    const height = el.clientHeight;
+    const maxScrollTop = scrollHeight - height;
+    el.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+  };
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -48,7 +77,7 @@ export default function Chats(props: Props<boolean>) {
         </div>
         <span className={titleClass}>{conversationId}</span>
       </div>
-      <div className={styles.main}>
+      <div className={styles.main} ref={ref}>
         <ul>
           {messages.map((message, index) => {
             const liClass = classNames(styles.chatItem, {
@@ -84,7 +113,11 @@ export default function Chats(props: Props<boolean>) {
           onChange={onchange}
           value={textValue}
         />
-        <IconButton onClick={() => dispatch(sendMessage())}>
+        <IconButton
+          onClick={() =>
+            dispatch(sendMessage(socketId)).then(() => scrollToBottom())
+          }
+        >
           <KeyboardReturnSharpIcon />
         </IconButton>
       </div>
