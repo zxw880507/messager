@@ -15,17 +15,32 @@ model User {
   id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
   email String @unique
   password String
-  creator Conversation[] @relation("Creator")
-  participant Conversation[] @relation("Participant")
+  profile Profile?
   sender Message[]
+  user1 Friends[] @relation("User1")
+  user2 Friends[] @relation("User2")
+}
+model Profile {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  username String?
+  bio String?
+  avartar String?
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+}
+model Friends {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  user1 User @relation("User1", fields: [user1Id], references: [id])
+  user1Id String @db.ObjectId
+  user2 User @relation("User2", fields: [user2Id], references: [id])
+  user2Id String @db.ObjectId
+  conversation Conversation?
 }
 
 model Conversation {
   id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  creator User @relation("Creator",fields: [creatorId], references: [id])
-  creatorId String @db.ObjectId
-  participant User @relation("Participant", fields: [participantId], references: [id])
-  participantId String @db.ObjectId
+  friends Friends @relation(fields: [friendsId], references: [id])
+  friendsId String @db.ObjectId
   message Message[]
 }
 
