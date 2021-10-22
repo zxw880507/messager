@@ -49,13 +49,20 @@ export const sendMessage = createAsyncThunk(
   }
 );
 
+export const receiveMessage = createAsyncThunk(
+  "/receiveMessage",
+  async (message: any) => {
+    return message;
+  }
+);
+
 const messagesSlice = createSlice({
   name: "messages",
   initialState,
   reducers: {
-    receiveMessage(state, action: PayloadAction<any>) {
-      state.messages = [...state.messages, action.payload];
-    },
+    // receiveMessage(state, action: PayloadAction<any>) {
+    //   state.messages = [...state.messages, action.payload];
+    // },
   },
   extraReducers(builder) {
     builder
@@ -80,10 +87,13 @@ const messagesSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action: AnyAction) => {
         state.status = "succeeded";
         state.messages = [...state.messages, action.payload];
+      })
+      .addCase(receiveMessage.fulfilled, (state, action: AnyAction) => {
+        state.messages = [...state.messages, action.payload];
       });
   },
 });
 
 export default messagesSlice.reducer;
 export const messagesState = (state: RootState) => state.messagesState;
-export const { receiveMessage } = messagesSlice.actions;
+// export const { receiveMessage } = messagesSlice.actions;
