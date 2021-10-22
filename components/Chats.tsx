@@ -50,7 +50,9 @@ export default function Chats(props: Props<boolean>) {
     const channel = pusher.subscribe("msg_channel");
     if (conversationId) {
       channel.bind(conversationId, function (data: any) {
-        dispatch(receiveMessage(data.message));
+        dispatch(receiveMessage(data.message))
+          .unwrap()
+          .then(() => scrollToBottom());
       });
     }
     return () => {
@@ -115,7 +117,9 @@ export default function Chats(props: Props<boolean>) {
         />
         <IconButton
           onClick={() =>
-            dispatch(sendMessage(socketId)).then(() => scrollToBottom())
+            dispatch(sendMessage(socketId))
+              .unwrap()
+              .then(() => scrollToBottom())
           }
         >
           <KeyboardReturnSharpIcon />
