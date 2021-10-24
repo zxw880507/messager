@@ -10,12 +10,12 @@ enum Status {
   failed = "failed",
 }
 
-interface conversationState {
+interface ConversationState {
   conversation: Data;
   status: keyof typeof Status;
   error: string | null | undefined;
 }
-const initialState: conversationState = {
+const initialState: ConversationState = {
   conversation: [],
   status: "idle",
   error: null,
