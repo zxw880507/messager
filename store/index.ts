@@ -6,6 +6,8 @@ import conversationReducer from "./features/conversationSlice";
 import chatReducer from "./features/chatSlice";
 import messagesReducer from "./features/messagesSlice";
 import textReducer from "./features/textSlice";
+import tabReducer from "./features/tabSlice";
+import friendsReducer from "./features/friendsSlice";
 
 declare const reducer: Reducer<{}>;
 
@@ -17,6 +19,8 @@ const store = configureStore({
     chat: chatReducer,
     messagesState: messagesReducer,
     text: textReducer,
+    tabState: tabReducer,
+    friendsState: friendsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   devTools: process.env.NODE_ENV !== "production",
