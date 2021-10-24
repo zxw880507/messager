@@ -3,13 +3,16 @@ import { useRouter } from "next/router";
 import { Container, Box, useMediaQuery } from "@mui/material";
 import { useState, useEffect } from "react";
 import Tabs from "../components/Tabs";
-import List from "../components/List";
+import ConversationList from "../components/ConversationList";
+import FriendsList from "../components/FriendsList";
+import Profile from "../components/Profile";
 import Chats from "../components/Chats";
 import NoMatch from "../components/NoMatch";
 import { setLogout } from "../store/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import useAuth from "../lib/useAuth";
 import { chatState } from "../store/features/chatSlice";
+import { tab } from "../store/features/tabSlice";
 
 const MyMessage = () => {
   const matches = useMediaQuery("(min-width:600px)");
@@ -17,6 +20,7 @@ const MyMessage = () => {
   const id = router.query.id as string;
   const dispatch = useAppDispatch();
   const { isConversation } = useAppSelector(chatState);
+  const tabSelected = useAppSelector(tab);
   const { auth, status } = useAuth();
 
   useEffect(() => {
@@ -62,7 +66,13 @@ const MyMessage = () => {
             </div>
             {!(!matches && isConversation) && (
               <div className="list">
-                <List matches={matches} id={id} />
+                {tabSelected === "conversation" && (
+                  <ConversationList matches={matches} id={id} />
+                )}
+                {tabSelected === "friends" && (
+                  <FriendsList matches={matches} id={id} />
+                )}
+                {tabSelected === "profile" && <Profile />}
               </div>
             )}
             {isConversation && (
