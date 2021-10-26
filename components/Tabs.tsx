@@ -21,10 +21,10 @@ export default function Tabs(): JSX.Element {
 
   return (
     <>
-      <IconButton onClick={() => onSelect("friends")}>
+      <IconButton onClick={() => onSelect("conversation")}>
         <ChatBubbleRounded />
       </IconButton>
-      <IconButton onClick={() => onSelect("conversation")}>
+      <IconButton onClick={() => onSelect("friends")}>
         <Group />
       </IconButton>
       <IconButton onClick={() => onSelect("profile")}>
