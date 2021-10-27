@@ -6,9 +6,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomInput from "./CustomInput";
 import DateSelect from "./DatePicker";
+import { textTransform } from "../lib/helpers";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { infofieldState } from "../store/features/infofieldSlice";
 
 export default function Profile() {
   const [editMode, setEditMode] = useState<boolean>(false);
+  const infofield = useAppSelector(infofieldState);
+  const labels = Object.keys(infofield);
   return (
     <div className={style.grid}>
       <div className={style.avatarBox}>
@@ -68,62 +73,15 @@ export default function Profile() {
         </div>
         <Paper elevation={1} sx={{ width: "100%", height: "100%" }}>
           <ul>
-            {/*  */}
-            {editMode ? (
-              <>
-                <li>
-                  <span>Nickname</span>
-                  <CustomInput />
+            {labels.map((label, index) => {
+              const labelName = textTransform(label);
+              return (
+                <li key={index}>
+                  <span>{labelName}</span>
+                  {index === 3 ? <DateSelect /> : <CustomInput />}
                 </li>
-                <li>
-                  <span>First Name</span>
-                  <CustomInput />
-                </li>
-                <li>
-                  <span>Last Name</span>
-                  <CustomInput />
-                </li>
-                <li>
-                  <span>Date of Birth</span>
-                  <DateSelect />
-                </li>
-                <li>
-                  <span>Location</span>
-                  <CustomInput />
-                </li>
-                <li>
-                  <span>Bio</span>
-                  <CustomInput />
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <span>Nickname</span>
-                  <span>Shit Dragon</span>
-                </li>
-                <li>
-                  <span>First Name</span>
-                  <span>Jack</span>
-                </li>
-                <li>
-                  <span>Last Name</span>
-                  <span>Zhao</span>
-                </li>
-                <li>
-                  <span>Date of Birth</span>
-                  <span>N/A</span>
-                </li>
-                <li>
-                  <span>Location</span>
-                  <span>Calgary</span>
-                </li>
-                <li>
-                  <span>Bio</span>
-                  <span>I love cancer lady</span>
-                </li>
-              </>
-            )}
+              );
+            })}
           </ul>
         </Paper>
       </div>
