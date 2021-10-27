@@ -8,8 +8,7 @@ import messagesReducer from "./features/messagesSlice";
 import textReducer from "./features/textSlice";
 import tabReducer from "./features/tabSlice";
 import friendsReducer from "./features/friendsSlice";
-
-declare const reducer: Reducer<{}>;
+import infofieldReducer from "./features/infofieldSlice";
 
 const store = configureStore({
   reducer: {
@@ -21,6 +20,7 @@ const store = configureStore({
     text: textReducer,
     tabState: tabReducer,
     friendsState: friendsReducer,
+    infofield: infofieldReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   devTools: process.env.NODE_ENV !== "production",
